@@ -59,7 +59,7 @@ export default function AnalysisPage() {
         <div className="section-heading">
           <h1>Career Analysis</h1>
           <p>
-            Choose your RIASEC profile, skills, and MBTI to generate suitable job opportunities.
+            Choose your RIASEC profile /at most 3 of them/, skills, and MBTI to generate suitable job opportunities.
           </p>
         </div>
         <div className="hero-actions">

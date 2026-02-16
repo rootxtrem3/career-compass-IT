@@ -1,8 +1,8 @@
 const CONTACTS = [
-  { label: "Email", value: "hello@careercompass.app" },
-  { label: "Phone", value: "+1 (555) 104-2727" },
-  { label: "Address", value: "400 Market St, San Francisco, CA 94111" },
-  { label: "Support Hours", value: "Monday-Friday, 9:00 AM-6:00 PM PST" }
+  { label: "Email", value: "ebafrost@gmail.com" },
+  { label: "Phone", value: "+251 973943466" },
+  // { label: "Address", value: "400 Market St, San Francisco, CA 94111" },
+ // { label: "Support Hours", value: "Monday-Friday, 9:00 AM-6:00 PM PST" }
 ];
 
 export default function AboutPage() {
