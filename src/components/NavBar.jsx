@@ -4,7 +4,7 @@ const NAV_ITEMS = [
   { route: "about", label: "About Us", href: "#/about" }
 ];
 
-export default function NavBar({ route }) {
+export default function NavBar({ route, theme, onThemeToggle }) {
   return (
     <header className="site-header glass-card">
       <a className="brand-mark" href="#/home">
@@ -22,9 +22,20 @@ export default function NavBar({ route }) {
           </a>
         ))}
       </nav>
-      <a className="header-cta" href="#/analysis">
-        Get Started
-      </a>
+      <div className="header-actions">
+        <button
+          className="theme-toggle"
+          type="button"
+          onClick={onThemeToggle}
+          aria-pressed={theme === "dark"}
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+        >
+          Theme
+        </button>
+        <a className="header-cta" href="#/analysis">
+          Get Started
+        </a>
+      </div>
     </header>
   );
 }

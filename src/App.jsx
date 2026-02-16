@@ -5,6 +5,7 @@ import AnalysisPage from "./pages/AnalysisPage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 
 const VALID_ROUTES = new Set(["home", "analysis", "about"]);
+const THEME_STORAGE_KEY = "career-compass-theme";
 
 function getRouteFromHash() {
   const hash = window.location.hash.replace(/^#\/?/, "").toLowerCase().trim();
@@ -12,14 +13,26 @@ function getRouteFromHash() {
   return VALID_ROUTES.has(hash) ? hash : "home";
 }
 
+function getInitialTheme() {
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export default function App() {
   const [route, setRoute] = useState(getRouteFromHash());
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRouteFromHash());
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   useEffect(() => {
     const revealNodes = Array.from(document.querySelectorAll("[data-reveal]"));
@@ -51,7 +64,13 @@ export default function App() {
     <div className="site-shell">
       <div className="backdrop-glow backdrop-glow-a" />
       <div className="backdrop-glow backdrop-glow-b" />
-      <NavBar route={route} />
+      <NavBar
+        route={route}
+        theme={theme}
+        onThemeToggle={() =>
+          setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))
+        }
+      />
       <main className="page-wrap">{currentPage}</main>
     </div>
   );
