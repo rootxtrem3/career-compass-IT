@@ -21,3 +21,5 @@ npm run dev
 ```bash
 npm run build
 ```
+Built for anyone by students of GSBBSS. 
+I hate the name GBBS (Gelan Boys' Boarding School). I prefer Gelan Special Boys' Boarding Secondary School.
