@@ -1,0 +1,34 @@
+
+> career-compass-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+Career Compass API listening on http://localhost:4000
+[0mGET /api/v1/health [32m200[0m 3.872 ms - 97[0m
+[0mGET /api/v1/lookups [36m304[0m 141.774 ms - -[0m
+[0mGET /api/v1/lookups [36m304[0m 12.091 ms - -[0m
+[0mGET /api/v1/tracking/history?limit=10 [33m401[0m 3.947 ms - 68[0m
+[0mGET /api/v1/careers/paths [36m304[0m 45.933 ms - -[0m
+[0mGET /api/v1/careers/paths [36m304[0m 9.236 ms - -[0m
+[0mGET /api/v1/careers/paths [36m304[0m 7.351 ms - -[0m
+[0mGET /api/v1/careers/paths [36m304[0m 11.582 ms - -[0m
+[0mGET /api/v1/lookups [36m304[0m 11.323 ms - -[0m
+[0mGET /api/v1/tracking/history?limit=10 [33m401[0m 2.819 ms - 68[0m
+[0mGET /api/v1/tracking/history?limit=10 [33m401[0m 2.494 ms - 68[0m
+[0mGET /api/v1/lookups [36m304[0m 78.128 ms - -[0m
+[0mPOST /api/v1/analysis/recommendations [32m200[0m 66.256 ms - 9161[0m
+[0mGET /api/v1/careers/paths [36m304[0m 34.677 ms - -[0m
+[0mGET /api/v1/careers/paths [36m304[0m 8.735 ms - -[0m
+[0mGET /api/v1/tracking/history?limit=10 [33m401[0m 13.985 ms - 68[0m
+[0mGET /api/v1/tracking/history?limit=10 [33m401[0m 3.057 ms - 68[0m
+[0mGET /api/v1/lookups [36m304[0m 106.915 ms - -[0m
+[0mGET /api/v1/lookups [36m304[0m 13.974 ms - -[0m
+[0mGET /api/v1/stats/world [32m200[0m 47.907 ms - 861[0m
+[0mGET /api/v1/stats/world [32m200[0m 29.905 ms - 861[0m
+[0mGET /api/v1/jobs?limit=6 [32m200[0m 53.271 ms - 3406[0m
+[0mGET /api/v1/jobs?limit=6 [32m200[0m 66.429 ms - 3406[0m
+Received SIGINT. Closing server...
