@@ -1,77 +1,55 @@
-import { useEffect, useMemo, useState } from "react";
-import NavBar from "./components/NavBar.jsx";
-import HomePage from "./pages/HomePage.jsx";
-import AnalysisPage from "./pages/AnalysisPage.jsx";
-import AboutPage from "./pages/AboutPage.jsx";
+import { useEffect, useState } from 'react';
+import { NavBar } from './components/layout/NavBar.jsx';
+import { useAuth } from './context/AuthContext.jsx';
+import { useHashRoute } from './hooks/useHashRoute.js';
+import { AboutPage } from './pages/AboutPage.jsx';
+import { AnalysisPage } from './pages/AnalysisPage.jsx';
+import { HomePage } from './pages/HomePage.jsx';
+import { LoginPage } from './pages/LoginPage.jsx';
+import { PathsPage } from './pages/PathsPage.jsx';
 
-const VALID_ROUTES = new Set(["home", "analysis", "about"]);
-const THEME_STORAGE_KEY = "career-compass-theme";
-
-function getRouteFromHash() {
-  const hash = window.location.hash.replace(/^#\/?/, "").toLowerCase().trim();
-  if (!hash) return "home";
-  return VALID_ROUTES.has(hash) ? hash : "home";
-}
+const THEME_KEY = 'career_compass_theme';
 
 function getInitialTheme() {
-  const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === 'light' || stored === 'dark') return stored;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 export default function App() {
-  const [route, setRoute] = useState(getRouteFromHash());
+  const { route } = useHashRoute();
+  const { user, logout } = useAuth();
   const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
-    const handleHashChange = () => setRoute(getRouteFromHash());
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
-
-  useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.setItem(THEME_KEY, theme);
   }, [theme]);
-
-  useEffect(() => {
-    const revealNodes = Array.from(document.querySelectorAll("[data-reveal]"));
-    if (!revealNodes.length) return undefined;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.14, rootMargin: "0px 0px -10% 0px" }
-    );
-
-    revealNodes.forEach((node) => observer.observe(node));
-
-    return () => observer.disconnect();
-  }, [route]);
-
-  const currentPage = useMemo(() => {
-    if (route === "analysis") return <AnalysisPage />;
-    if (route === "about") return <AboutPage />;
-    return <HomePage />;
-  }, [route]);
 
   return (
     <div className="site-shell">
-      <div className="backdrop-glow backdrop-glow-a" />
-      <div className="backdrop-glow backdrop-glow-b" />
+      <div className="ambient ambient-a" />
+      <div className="ambient ambient-b" />
+
       <NavBar
         route={route}
+        user={user}
+        onLogout={logout}
         theme={theme}
-        onThemeToggle={() =>
-          setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"))
-        }
+        onToggleTheme={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
       />
-      <main className="page-wrap">{currentPage}</main>
+
+      <main className="page-wrap">
+        {route === 'analysis' ? <AnalysisPage /> : null}
+        {route === 'paths' ? <PathsPage /> : null}
+        {route === 'about' ? <AboutPage /> : null}
+        {route === 'login' ? <LoginPage /> : null}
+        {route === 'home' ? <HomePage /> : null}
+      </main>
+
+      <footer className="site-footer">
+        <p>Career Compass · Intelligent job matching with MBTI, RIASEC, and skills.</p>
+      </footer>
     </div>
   );
 }

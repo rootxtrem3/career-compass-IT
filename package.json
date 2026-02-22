@@ -1,14 +1,21 @@
 {
   "name": "career-compass-modern",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:frontend": "vite",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:all": "bash scripts/dev-all.sh",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend:migrate": "npm --prefix backend run db:migrate",
+    "backend:seed": "npm --prefix backend run db:seed",
+    "backend:sync-jobs": "npm --prefix backend run jobs:sync"
   },
   "dependencies": {
+    "firebase": "^12.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
