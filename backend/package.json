@@ -1,30 +1,32 @@
 {
   "name": "career-compass-backend",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "db:migrate": "node scripts/migrate.js",
-    "db:seed": "node scripts/seed.js",
-    "db:reset": "npm run db:migrate && npm run db:seed",
-    "db:embedded": "node scripts/embeddedPgServer.js",
-    "jobs:sync": "node scripts/syncJobs.js"
+    "lint": "eslint . --ext .js",
+    "migrate": "for f in src/db/migrations/*.sql; do psql \"$DATABASE_URL\" -f \"$f\"; done",
+    "seed": "node src/db/seed.js",
+    "sync:adzuna": "node src/db/sync_adzuna.js",
+    "seed:skills": "node src/db/seed_skills.js",
+    "import:esco": "node src/db/import_esco.js",
+    "import:onet": "node src/db/import_onet.js"
   },
   "dependencies": {
-    "@embedded-postgres/linux-x64": "^18.2.0-beta.16",
     "cors": "^2.8.5",
+    "csv-parse": "^5.5.6",
     "dotenv": "^16.4.5",
-    "embedded-postgres": "^18.2.0-beta.16",
-    "express": "^4.21.1",
-    "firebase-admin": "^13.0.2",
-    "helmet": "^8.0.0",
-    "morgan": "^1.10.0",
-    "pg": "^8.13.1",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.6.0",
+    "node-cache": "^5.1.2",
+    "pg": "^8.12.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0"
   }
 }

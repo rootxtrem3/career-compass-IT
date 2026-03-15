@@ -1,38 +1,30 @@
-import cors from 'cors';
-import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import apiRoutes from './routes/index.js';
-import { env } from './config/env.js';
-import { authOptional } from './middleware/authOptional.js';
-import { errorHandler } from './middleware/errorHandler.js';
-import { notFound } from './middleware/notFound.js';
+import express from "express";
+import cors from "cors";
+import { json } from "express";
+import { errorHandler } from "./middleware/error.js";
+import healthRouter from "./routes/health.js";
+import authRouter from "./routes/auth.js";
+import assessmentsRouter from "./routes/assessments.js";
+import skillsRouter from "./routes/skills.js";
+import careersRouter from "./routes/careers.js";
+import progressRouter from "./routes/progress.js";
+import usersRouter from "./routes/users.js";
+import jobsRouter from "./routes/jobs.js";
 
-export function createApp() {
-  const app = express();
+const app = express();
 
-  app.use(
-    cors({
-      origin: env.CORS_ORIGIN,
-      credentials: true
-    })
-  );
-  app.use(helmet());
-  app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
-  app.use(express.json({ limit: '1mb' }));
-  app.use(authOptional);
+app.use(cors());
+app.use(json({ limit: "1mb" }));
 
-  app.get('/', (_req, res) => {
-    res.json({
-      success: true,
-      message: 'Career Compass API',
-      docs: '/api/v1/health'
-    });
-  });
+app.use("/health", healthRouter);
+app.use("/auth", authRouter);
+app.use("/assessments", assessmentsRouter);
+app.use("/skills", skillsRouter);
+app.use("/careers", careersRouter);
+app.use("/progress", progressRouter);
+app.use("/users", usersRouter);
+app.use("/jobs", jobsRouter);
 
-  app.use('/api/v1', apiRoutes);
-  app.use(notFound);
-  app.use(errorHandler);
+app.use(errorHandler);
 
-  return app;
-}
+export default app;

@@ -1,175 +1,66 @@
-# Career Compass
+# Career Compass (PostgreSQL, No Prisma)
 
-Career Compass is a full-stack platform for improving job searching and applications using:
-- RIASEC interests
-- MBTI personality alignment
-- Skill-based weighted matching
-- Skill-gap and certification insights
-- Aggregated jobs from a free public jobs API (Remotive), normalized into PostgreSQL
+Career Compass is a career discovery platform using RIASEC + MBTI, skill matching, and job market data. This build uses PostgreSQL with raw SQL and the `pg` driver (no Prisma), and uses plain JavaScript (no TypeScript).
 
-## Stack
+## Structure
+- `backend/` — Express API, PostgreSQL schema, Adzuna integration
+- `frontend/` — Next.js + Material UI frontend
+- `docs/` — architecture and deployment notes
 
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Database: PostgreSQL
-- API Style: REST (`/api/v1/*`)
-- Animations/UI: Scroll-triggered reveals, glassmorphism cards, responsive layout, SEO-ready meta structure
+## Quick Start
+1. Backend:
+   - Copy `backend/.env.example` to `.env` and fill values.
+   - For local dev without Firebase, keep `AUTH_BYPASS=true`.
+   - Run `npm install`, `npm run migrate`, `npm run dev`.
+2. Frontend:
+   - Copy `frontend/.env.local.example` to `.env.local`.
+   - Run `npm install`, `npm run dev`.
 
-## Project Structure
+## Sync Careers from Adzuna
+From `backend/`:
+- `npm run sync:adzuna`
 
-```text
-.
-├── backend/
-│   ├── migrations/
-│   ├── seeds/
-│   ├── scripts/
-│   └── src/
-│       ├── adapters/
-│       ├── algorithms/
-│       ├── config/
-│       ├── controllers/
-│       ├── middleware/
-│       ├── repositories/
-│       ├── routes/
-│       └── services/
-├── src/
-│   ├── components/
-│   ├── constants/
-│   ├── context/
-│   ├── hooks/
-│   ├── pages/
-│   └── services/
-└── README.md
-```
+This now syncs the latest Adzuna jobs into the `jobs` table for live updates on the homepage.
 
-## Prerequisites
+## Seed Skills (100+)
+From `backend/`:
+- `npm run seed:skills`
 
-- Node.js 18+
-- PostgreSQL 14+
+## Import ESCO (occupations + skills)
+1. Download the ESCO dataset (CSV) and extract it locally.
+2. Run:
+   - `npm run import:esco -- /path/to/esco`
 
-## Environment Variables
+## Import O*NET (occupations + RIASEC)
+1. Download the O*NET database (tab-delimited) and extract it locally.
+2. Run:
+   - `npm run import:onet -- /path/to/onet`
 
-### Frontend (`.env`)
+Notes:
+- ESCO provides occupations, skills, and their relations. O*NET provides RIASEC interest scores that we convert into the top 3 Holland codes.
+- O*NET requires attribution per its license.
 
-Copy `.env.example` to `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Available variables:
-- `VITE_API_BASE_URL` (default: `http://localhost:4000/api/v1`)
-
-### Backend (`backend/.env`)
-
-Copy backend template:
-
-```bash
-cp backend/.env.example backend/.env
-```
-
-Required values:
-- `PORT` (default: `4000`)
-- `DATABASE_URL` (PostgreSQL connection string)
-- `CORS_ORIGIN` (frontend URL, default `http://localhost:5173`)
-- `JOBS_SYNC_LIMIT` (default: `40`)
-- `JWT_SECRET` (at least 12 chars)
-
-## Installation
-
-Install root/frontend dependencies:
-
-```bash
-npm install
-```
-
-Install backend dependencies:
-
-```bash
-npm --prefix backend install
-```
-
-## Database Setup
-
-If you do not have PostgreSQL installed locally, you can run an embedded instance:
-
-```bash
-npm --prefix backend run db:embedded
-```
-
-Then use `postgres://postgres:postgres@127.0.0.1:55432/career_compass` as `DATABASE_URL`.
-
-1. Create database (example name):
-
-```sql
-CREATE DATABASE career_compass;
-```
-
-2. Run migrations:
-
-```bash
-npm run backend:migrate
-```
-
-3. Seed data:
-
-```bash
-npm run backend:seed
-```
-
-4. Optional: sync jobs from Remotive API:
-
-```bash
-npm run backend:sync-jobs
-```
-
-## Running Locally
-
-Start backend:
-
-```bash
-npm run dev:backend
-```
-
-Start frontend (new terminal):
-
-```bash
-npm run dev:frontend
-```
-
-Frontend: `http://localhost:5173`  
-Backend: `http://localhost:4000`
-
-## Core Features Delivered
-
-- Multipage React UI (Home, Analysis, Paths, About)
-- Modern minimal apple-style glassmorphism with blur cards
-- Scroll reveal animations across sections
-- Dynamic world career statistics from backend with chart visualization
-- Analysis engine with weighted hybrid scoring:
-  - Skills match: 50%
-  - RIASEC alignment: 30%
-  - MBTI alignment: 20%
-- Dedicated `Paths` page for career requirements (skills, certifications, experience level)
-- Safe external links for MBTI and RIASEC tests (`target="_blank" rel="noopener noreferrer"`)
-- Public jobs API integration (Remotive) and normalized persistence in PostgreSQL
-- Authentication-ready API and frontend context (register/login/me with mock JWT signing)
-
-## Main API Endpoints
-
-- `GET /api/v1/health`
-- `GET /api/v1/lookups`
-- `GET /api/v1/careers/paths`
-- `GET /api/v1/stats/world`
-- `POST /api/v1/analysis/recommendations`
-- `GET /api/v1/jobs`
-- `POST /api/v1/jobs/sync`
-- `POST /api/v1/auth/register`
-- `POST /api/v1/auth/login`
-- `GET /api/v1/auth/me`
+## Run Both (dev)
+From the repo root:
+- `npm install`
+- `npm run install:all`
+- `npm run dev:all`
 
 ## Notes
+- Firebase Authentication is required for protected endpoints.
+- Job market data is cached with in-memory TTL by default.
 
-- Job sync includes a fallback dataset if the remote API is temporarily unavailable.
-- Authentication uses lightweight mock JWT signing for now; structure is ready for real JWT/Auth provider integration.
-- Migrations and seeds are idempotent for repeated setup during development.
+## Disable Auth Bypass (Login Only)
+1. Open `backend/.env` and set `AUTH_BYPASS=false`.
+2. Provide real Firebase Admin credentials:
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_CLIENT_EMAIL`
+   - `FIREBASE_PRIVATE_KEY` (multiline key with `\n` escapes)
+3. Restart the backend: `npm --prefix backend run dev`.
+4. On the frontend, use Firebase sign-in to obtain an ID token and send `Authorization: Bearer <token>` with API requests.
+
+## Firestore User Sessions
+The backend now writes user profile + session metadata into Firestore on each `/auth/sync` call:
+- Collection: `users/{uid}`
+- Subcollection: `users/{uid}/sessions/{uid-iat}`
+It stores token metadata (issued/expires) but not the raw JWT.
