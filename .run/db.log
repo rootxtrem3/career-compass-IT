@@ -1,0 +1,26 @@
+
+> career-compass-backend@1.0.0 db:embedded
+> node scripts/embeddedPgServer.js
+
+2026-03-07 20:05:15.573 EAT [37850] LOG:  starting PostgreSQL 18.2 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit
+2026-03-07 20:05:15.574 EAT [37850] LOG:  listening on IPv6 address "::1", port 55432
+2026-03-07 20:05:15.574 EAT [37850] LOG:  listening on IPv4 address "127.0.0.1", port 55432
+2026-03-07 20:05:15.581 EAT [37850] LOG:  listening on Unix socket "/tmp/.s.PGSQL.55432"
+2026-03-07 20:05:15.597 EAT [37856] LOG:  database system was shut down at 2026-03-07 20:03:37 EAT
+2026-03-07 20:05:15.606 EAT [37850] LOG:  database system is ready to accept connections
+2026-03-07 20:05:15.637 EAT [37860] ERROR:  database "career_compass" already exists
+2026-03-07 20:05:15.637 EAT [37860] STATEMENT:  CREATE DATABASE "career_compass"
+Embedded PostgreSQL running on postgres://postgres:postgres@127.0.0.1:55432/career_compass
+2026-03-07 20:07:59.391 EAT [37850] LOG:  received fast shutdown request
+Stopping embedded PostgreSQL (SIGINT)...
+Stopping embedded PostgreSQL (SIGINT)...
+Stopping embedded PostgreSQL (SIGTERM)...
+2026-03-07 20:07:59.401 EAT [37850] LOG:  aborting any active transactions
+2026-03-07 20:07:59.401 EAT [37860] FATAL:  terminating connection due to administrator command
+error: terminating connection due to administrator command
+2026-03-07 20:07:59.407 EAT [37850] LOG:  background worker "logical replication launcher" (PID 37859) exited with exit code 1
+2026-03-07 20:07:59.409 EAT [37854] LOG:  shutting down
+Error: Connection terminated unexpectedly
+2026-03-07 20:07:59.420 EAT [37854] LOG:  checkpoint starting: shutdown immediate
+2026-03-07 20:07:59.539 EAT [37854] LOG:  checkpoint complete: wrote 42 buffers (0.3%), wrote 3 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.081 s, total=0.130 s; sync files=11, longest=0.012 s, average=0.008 s; distance=317 kB, estimate=317 kB; lsn=0/1BD0B20, redo lsn=0/1BD0B20
+2026-03-07 20:07:59.569 EAT [37850] LOG:  database system is shut down
