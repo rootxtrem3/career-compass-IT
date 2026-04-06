@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
-BACKEND_ENV_FILE="$ROOT_DIR/backend/.env"
+ENV_FILE="$ROOT_DIR/.env"
 
 mkdir -p "$RUN_DIR"
 
@@ -38,12 +38,12 @@ read_env_value() {
   grep -E "^${key}=" "$file" | head -n1 | cut -d'=' -f2-
 }
 
-DATABASE_URL_VALUE="$(read_env_value "DATABASE_URL" "$BACKEND_ENV_FILE")"
+DATABASE_URL_VALUE="$(read_env_value "DATABASE_URL" "$ENV_FILE")"
 if [[ -z "$DATABASE_URL_VALUE" ]]; then
   DATABASE_URL_VALUE="postgres://postgres:postgres@127.0.0.1:55432/career_compass"
 fi
 
-API_PORT="$(read_env_value "PORT" "$BACKEND_ENV_FILE")"
+API_PORT="$(read_env_value "PORT" "$ENV_FILE")"
 if [[ -z "$API_PORT" ]]; then
   API_PORT="4000"
 fi

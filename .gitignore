@@ -1,8 +1,12 @@
+.env
 node_modules
 backend/node_modules
 dist
 .DS_Store
 npm-debug.log*
-.env
 backend/.env
+frontend/.env.local
+frontend/.next
+gelanctf-firebase-adminsdk-fbsvc-e0c7ca8797.json
+.codex
 backend/.embedded-pg
