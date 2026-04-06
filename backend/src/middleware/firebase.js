@@ -1,7 +1,12 @@
 import admin from "firebase-admin";
 import { config } from "../utils/config.js";
 
-if (!config.AUTH_BYPASS && !admin.apps.length) {
+const hasFirebaseAdminCredentials =
+  Boolean(config.FIREBASE_PROJECT_ID) &&
+  Boolean(config.FIREBASE_CLIENT_EMAIL) &&
+  Boolean(config.FIREBASE_PRIVATE_KEY);
+
+if (!config.AUTH_BYPASS && hasFirebaseAdminCredentials && !admin.apps.length) {
   admin.initializeApp({
     credential: admin.credential.cert({
       projectId: config.FIREBASE_PROJECT_ID,
@@ -12,7 +17,7 @@ if (!config.AUTH_BYPASS && !admin.apps.length) {
 }
 
 export async function verifyFirebaseToken(req, res, next) {
-  if (config.AUTH_BYPASS) {
+  if (config.AUTH_BYPASS || !hasFirebaseAdminCredentials) {
     req.user = { uid: "dev-user", email: "dev@local", name: "Dev User" };
     next();
     return;

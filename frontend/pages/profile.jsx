@@ -7,6 +7,10 @@ import GlassCard from "../components/GlassCard";
 import Layout from "../components/Layout";
 import { fetcher } from "../utils/api.js";
 
+function formatPercent(value) {
+  return typeof value === "number" ? `${value.toFixed(2)}%` : "—";
+}
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState(null);
   const [progress, setProgress] = useState(null);
@@ -41,9 +45,11 @@ export default function ProfilePage() {
 
   const readiness =
     progress?.milestones?.length
-      ? Math.round(
+      ? Number(
+          (
           (progress.milestones.filter((item) => item.completed_at).length / progress.milestones.length) *
             100
+          ).toFixed(2)
         )
       : 0;
 
@@ -82,7 +88,7 @@ export default function ProfilePage() {
                 Active goal: {progress?.goal?.title ? progress.goal.title : "No active goal"}
               </p>
               <LinearProgress variant="determinate" value={readiness} className="progress-bar" />
-              <p className="muted">{readiness}% readiness</p>
+              <p className="muted">{formatPercent(readiness)} readiness</p>
             </GlassCard>
           </section>
         ) : null}
@@ -119,7 +125,7 @@ export default function ProfilePage() {
                 <div key={item.id} className="glass-soft result-card">
                   <div className="section-head-row">
                     <h3>{item.title}</h3>
-                    <span>{item.compatibility_score ?? "—"}%</span>
+                    <span>{formatPercent(item.compatibility_score)}</span>
                   </div>
                   <p className="muted">{item.description}</p>
                 </div>

@@ -4,12 +4,17 @@ import { Box, Button, IconButton } from "@mui/material";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import Navigation from "./Navigation";
+import { auth } from "../utils/firebase.js";
 
 export default function Layout({ children }) {
   const [theme, setTheme] = useState("light");
   const [activeModal, setActiveModal] = useState(null);
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
+  const [viewer, setViewer] = useState(null);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem("cc-theme") : null;
@@ -19,6 +24,16 @@ export default function Layout({ children }) {
 
     const cookies = window.localStorage.getItem("cc-cookies-accepted");
     setCookiesAccepted(cookies === "true");
+  }, []);
+
+  useEffect(() => {
+    if (!auth) return undefined;
+    return onAuthStateChanged(auth, (user) => {
+      setViewer(user);
+      if (!user && typeof window !== "undefined") {
+        window.localStorage.removeItem("cc-token");
+      }
+    });
   }, []);
 
   function toggleTheme() {
@@ -46,6 +61,14 @@ export default function Layout({ children }) {
     setCookiesAccepted(true);
   }
 
+  async function handleLogout() {
+    if (auth) {
+      await signOut(auth);
+    }
+    window.localStorage.removeItem("cc-token");
+    window.location.href = "/";
+  }
+
   return (
     <Box className="site-shell">
       <div className="ambient ambient-a" />
@@ -69,9 +92,32 @@ export default function Layout({ children }) {
           >
             {theme === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
           </IconButton>
-          <Button component={Link} href="/login" variant="contained" className="m3-btn">
-            Login
-          </Button>
+          {viewer ? (
+            <>
+              <Button
+                component={Link}
+                href="/profile"
+                variant="outlined"
+                className="m3-btn soft"
+                startIcon={<PersonRoundedIcon />}
+              >
+                {viewer.displayName || viewer.email || "Profile"}
+              </Button>
+              <Button
+                type="button"
+                variant="contained"
+                className="m3-btn"
+                startIcon={<LogoutRoundedIcon />}
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Button component={Link} href="/login" variant="contained" className="m3-btn">
+              Login
+            </Button>
+          )}
         </div>
       </header>
 
@@ -101,7 +147,7 @@ export default function Layout({ children }) {
                 <p>
                   Career Compass collects profile, assessment, and skills data to generate
                   personalized career recommendations. Your assessment responses, saved careers, and
-                  progress milestones are stored in PostgreSQL.
+                  progress milestones are stored in Firebase-backed services for this build.
                 </p>
                 <p>
                   Authentication credentials are handled by Firebase Authentication. We never store

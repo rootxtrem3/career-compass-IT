@@ -7,6 +7,17 @@ import GlassCard from "../components/GlassCard";
 import Layout from "../components/Layout";
 import { fetcher } from "../utils/api.js";
 
+const pathFeatures = [
+  "Must-have and nice-to-have skills",
+  "Educational thresholds and alternative certifications",
+  "Salary and growth signals",
+  "Persistent checklist progress for authenticated users"
+];
+
+function formatPercent(value) {
+  return `${value.toFixed(2)}%`;
+}
+
 export default function PathsPage() {
   const [paths, setPaths] = useState([]);
   const [goal, setGoal] = useState(null);
@@ -21,17 +32,14 @@ export default function PathsPage() {
     async function load() {
       try {
         await fetcher("/auth/sync", { method: "POST" });
-        const [pathsData, progress] = await Promise.all([
-          fetcher("/careers"),
-          fetcher("/progress")
-        ]);
+        const [pathsData, progress] = await Promise.all([fetcher("/careers"), fetcher("/progress")]);
         if (!cancelled) {
           setPaths(pathsData);
           setGoal(progress.goal);
           setMilestones(progress.milestones || []);
           setError("");
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) setError("Unable to load career paths.");
       } finally {
         if (!cancelled) setLoading(false);
@@ -47,7 +55,7 @@ export default function PathsPage() {
   const progressValue = useMemo(() => {
     if (!milestones.length) return 0;
     const completed = milestones.filter((item) => item.completed_at).length;
-    return Math.round((completed / milestones.length) * 100);
+    return Number(((completed / milestones.length) * 100).toFixed(2));
   }, [milestones]);
 
   async function trackPath(careerId) {
@@ -81,17 +89,32 @@ export default function PathsPage() {
     setMilestones(updated.milestones || []);
   }
 
+  async function togglePathTracking(careerId, checked) {
+    if (checked) {
+      await trackPath(careerId);
+      return;
+    }
+    if (goal?.id === careerId) {
+      await untrackPath();
+    }
+  }
+
   return (
     <Layout>
       <div className="page-stack">
         <GlassCard className="content-card fade-up" as="section">
-          <p className="eyebrow">Career Paths</p>
-          <h1>Skills, requirements, and your path checklist</h1>
+          <p className="eyebrow">Action and tracking</p>
+          <h1>Turn recommendations into a roadmap</h1>
           <p>
-            Review requirements per role, then create a personal checklist to track progress for your
-            selected path.
+            The proposal describes the Paths page as the bridge between insight and execution. Each
+            role should expose requirements, certifications, salary expectations, and a personal
+            checklist that persists over time.
           </p>
-          <input className="input-field" placeholder="Search paths (e.g. data, design, analyst)" />
+          <ul className="tag-list">
+            {pathFeatures.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
           <p className="muted">
             {loading ? "Loading paths..." : `${paths.length} career path(s) found`}
           </p>
@@ -120,30 +143,25 @@ export default function PathsPage() {
                   ? `$${path.salary_min.toLocaleString()} - $${path.salary_max.toLocaleString()}`
                   : "Not specified"}
               </p>
-
-              {goal?.id === path.id ? (
-                <Button
-                  type="button"
-                  variant="contained"
-                  className="m3-btn"
-                  onClick={untrackPath}
-                  disabled={trackingId === "untrack"}
-                  startIcon={<RouteRoundedIcon />}
-                >
-                  Untrack path
-                </Button>
-              ) : (
-                <Button
-                  type="button"
-                  variant="outlined"
-                  className="m3-btn soft"
-                  onClick={() => trackPath(path.id)}
-                  disabled={trackingId === path.id}
-                  startIcon={<RouteRoundedIcon />}
-                >
-                  Track this path
-                </Button>
-              )}
+              <label className="track-toggle">
+                <input
+                  type="checkbox"
+                  checked={goal?.id === path.id}
+                  disabled={trackingId === path.id || trackingId === "untrack"}
+                  onChange={(event) => togglePathTracking(path.id, event.target.checked)}
+                />
+                <span>
+                  {goal?.id === path.id ? "Tracked career path" : "Track career path"}
+                </span>
+              </label>
+              <div className="section-head-left muted">
+                <RouteRoundedIcon fontSize="small" />
+                <span>
+                  {goal?.id === path.id
+                    ? "This path is currently active in your checklist."
+                    : "Select this checkbox to add the path to your progress tracker."}
+                </span>
+              </div>
             </GlassCard>
           ))}
         </section>
@@ -152,14 +170,14 @@ export default function PathsPage() {
           <div className="section-head-row">
             <div className="section-head-left">
               <CheckCircleRoundedIcon />
-              <h2>My checklist ({progressValue}% complete)</h2>
+              <h2>Progress checklist ({formatPercent(progressValue)} complete)</h2>
             </div>
           </div>
           {goal ? (
             <>
               <p className="muted">Active path: {goal.title}</p>
               <LinearProgress variant="determinate" value={progressValue} className="progress-bar" />
-              <ul className="tag-list">
+              <ul className="tag-list checklist-list">
                 {milestones.map((item) => (
                   <li key={item.id}>
                     <label className="check-item">
@@ -175,7 +193,7 @@ export default function PathsPage() {
               </ul>
             </>
           ) : (
-            <p className="muted">Select a career path to begin tracking.</p>
+            <p className="muted">Select a career path to begin tracking persistent progress.</p>
           )}
         </GlassCard>
       </div>

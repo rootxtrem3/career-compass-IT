@@ -1,18 +1,27 @@
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import GlassCard from "../components/GlassCard";
 import Layout from "../components/Layout";
 import { auth, googleProvider } from "../utils/firebase.js";
 import {
   createUserWithEmailAndPassword,
+  getRedirectResult,
   signInWithEmailAndPassword,
   signInWithPopup,
-  updateProfile,
-  getRedirectResult,
-  signInWithRedirect
+  signInWithRedirect,
+  updateProfile
 } from "firebase/auth";
 import { fetcher } from "../utils/api.js";
+
+const benefits = [
+  { label: "Saved analyses", icon: <HistoryRoundedIcon fontSize="inherit" /> },
+  { label: "Persistent checklist", icon: <TaskAltRoundedIcon fontSize="inherit" /> },
+  { label: "Secure access", icon: <LockRoundedIcon fontSize="inherit" /> }
+];
 
 export default function LoginPage() {
   const [mode, setMode] = useState("login");
@@ -43,7 +52,7 @@ export default function LoginPage() {
         window.location.href = "/profile";
       })
       .catch(() => {
-        // Ignore redirect errors (popup flow may be used)
+        // Ignore redirect errors when popup flow is used.
       });
   }, [isFirebaseConfigured]);
 
@@ -97,12 +106,21 @@ export default function LoginPage() {
     <Layout>
       <div className="login-wrap">
         <GlassCard className="content-card login-hero fade-up" as="section">
-          <p className="eyebrow">Authentication</p>
-          <h1>Welcome back to Career Compass</h1>
+          <p className="eyebrow">Access and persistence</p>
+          <h1>Save your roadmap and return to it later</h1>
           <p>
-            Use Google sign-in for the fastest access, or continue with email and password as a
-            fallback.
+            The login page exists to unlock secure persistence. Authenticated users can retain their
+            assessment history, tracked career path, and checklist progress across sessions.
           </p>
+
+          <div className="tag-row">
+            {benefits.map((item) => (
+              <span key={item.label} className="info-pill">
+                {item.icon}
+                {item.label}
+              </span>
+            ))}
+          </div>
 
           {!isFirebaseConfigured ? (
             <p className="muted">Firebase is not configured. Set `NEXT_PUBLIC_FIREBASE_*` vars.</p>

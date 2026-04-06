@@ -73,11 +73,21 @@ const mbti = [
   "ESFP"
 ].map((code) => ({ code, title: code }));
 
+const scoringModel = [
+  { label: "Skills", value: "50%" },
+  { label: "RIASEC", value: "30%" },
+  { label: "MBTI", value: "20%" }
+];
+
 const fallbackLookups = {
   riasec,
   mbti,
   skills: []
 };
+
+function formatPercent(value) {
+  return typeof value === "number" ? `${value.toFixed(2)}%` : "—";
+}
 
 export default function AnalysisPage() {
   const [lookups, setLookups] = useState(fallbackLookups);
@@ -107,7 +117,7 @@ export default function AnalysisPage() {
     const riasecScore = Math.min(selectedRiasec.length / 3, 1);
     const mbtiScore = selectedMbti ? 1 : 0;
     const skillsScore = Math.min(selectedSkills.length / 5, 1);
-    return Math.round((riasecScore * 0.4 + mbtiScore * 0.2 + skillsScore * 0.4) * 100);
+    return Number(((riasecScore * 0.3 + mbtiScore * 0.2 + skillsScore * 0.5) * 100).toFixed(2));
   }, [selectedRiasec, selectedMbti, selectedSkills]);
 
   function toggleRiasec(code) {
@@ -126,7 +136,7 @@ export default function AnalysisPage() {
 
   const filteredSkills = useMemo(() => {
     const query = skillSearch.trim().toLowerCase();
-    if (!query) return lookups.skills.slice(0, 5);
+    if (!query) return lookups.skills.slice(0, 12);
     return lookups.skills.filter((item) => item.name.toLowerCase().includes(query));
   }, [skillSearch, lookups.skills]);
 
@@ -166,12 +176,22 @@ export default function AnalysisPage() {
     <Layout>
       <div className="page-stack">
         <GlassCard className="content-card fade-up" as="section">
-          <p className="eyebrow">Hybrid Scoring Engine</p>
-          <h1>Career fit analysis</h1>
+          <p className="eyebrow">Decision engine</p>
+          <h1>Hybrid career matching based on the proposal model</h1>
           <p>
-            Weighted scoring combines skills, RIASEC alignment, and MBTI signals to output ranked
-            matches. Results include fit scores and skill gaps.
+            This module collects personality and skill inputs, runs the weighted recommendation
+            logic, and returns ranked career options with compatibility scores. The intended model is
+            explicitly weighted toward existing skills while still using RIASEC and MBTI to reduce
+            career mismatch.
           </p>
+          <div className="metric-strip">
+            {scoringModel.map((item) => (
+              <div key={item.label} className="glass-soft metric-chip">
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
           <div className="hero-actions">
             <Button
               component="a"
@@ -181,7 +201,7 @@ export default function AnalysisPage() {
               variant="outlined"
               className="m3-btn soft"
             >
-              Take MBTI Test
+              Take MBTI test
             </Button>
             <Button
               component="a"
@@ -191,7 +211,7 @@ export default function AnalysisPage() {
               variant="outlined"
               className="m3-btn soft"
             >
-              Take RIASEC Test
+              Take RIASEC test
             </Button>
           </div>
         </GlassCard>
@@ -199,7 +219,7 @@ export default function AnalysisPage() {
         <section className="card-grid dual">
           <GlassCard className="content-card card-tilt fade-up">
             <div className="section-head-row">
-              <h2>1. Choose RIASEC (max 3)</h2>
+              <h2>1. Choose RIASEC traits</h2>
               <PsychologyRoundedIcon />
             </div>
             <div className="choice-grid">
@@ -217,12 +237,13 @@ export default function AnalysisPage() {
                 </button>
               ))}
             </div>
-            <p className="muted">Selected: {selectedRiasec.join(", ") || "None"}</p>
+            <p className="muted">Select up to three codes: {selectedRiasec.join(", ") || "None"}</p>
           </GlassCard>
 
           <GlassCard className="content-card card-tilt fade-up" style={{ animationDelay: "0.1s" }}>
             <div className="section-head-row">
-              <h2>2. Choose MBTI</h2>
+              <h2>2. Choose MBTI type</h2>
+              <InsightsRoundedIcon />
             </div>
             <div className="choice-grid">
               {lookups.mbti.map((item) => (
@@ -237,15 +258,15 @@ export default function AnalysisPage() {
                 </button>
               ))}
             </div>
-            <p className="muted">Selected: {selectedMbti || "None"}</p>
+            <p className="muted">Selected MBTI: {selectedMbti || "None"}</p>
           </GlassCard>
         </section>
 
         <GlassCard className="content-card fade-up" as="section">
           <div className="section-head-row">
             <div>
-              <p className="eyebrow">Skillset</p>
-              <h2>3. Choose Skills</h2>
+              <p className="eyebrow">Skill inventory</p>
+              <h2>3. Choose your strongest skills</h2>
             </div>
             <AutoGraphRoundedIcon />
           </div>
@@ -269,7 +290,7 @@ export default function AnalysisPage() {
               </button>
             ))}
           </div>
-          <p className="muted">Selected: {selectedSkills.length} skill(s)</p>
+          <p className="muted">Selected skills: {selectedSkills.length}</p>
         </GlassCard>
 
         <GlassCard className="content-card fade-up" as="section">
@@ -278,28 +299,26 @@ export default function AnalysisPage() {
               <h2>Recommendations</h2>
               <InsightsRoundedIcon />
             </div>
-            <Button
-              type="button"
-              variant="contained"
-              className="m3-btn"
-              onClick={runAnalysis}
-            >
-              {loading ? "Analyzing..." : "Generate"}
+            <Button type="button" variant="contained" className="m3-btn" onClick={runAnalysis}>
+              {loading ? "Analyzing..." : "Generate recommendations"}
             </Button>
           </div>
           {error ? <p className="muted">{error}</p> : null}
           {!results.length && !error ? (
-            <p className="muted">No recommendations yet. Use Generate to run analysis.</p>
+            <p className="muted">
+              No recommendations yet. Run the engine to generate ranked matches and compare your
+              current profile with target roles.
+            </p>
           ) : null}
           <div className="results-grid">
             {results.slice(0, 6).map((item) => (
-              <div key={item.id} className="glass-soft result-card">
-                <div className="section-head-row">
-                  <h3>{item.title}</h3>
-                  <span>{item.compatibility_score ?? "—"}%</span>
+                <div key={item.id} className="glass-soft result-card">
+                  <div className="section-head-row">
+                    <h3>{item.title}</h3>
+                    <span>{formatPercent(item.compatibility_score)}</span>
+                  </div>
+                  <p className="muted">{item.description}</p>
                 </div>
-                <p className="muted">{item.description}</p>
-              </div>
             ))}
           </div>
         </GlassCard>
@@ -307,14 +326,15 @@ export default function AnalysisPage() {
         <GlassCard className="content-card fade-up" as="section">
           <div className="section-head-row">
             <div>
-              <p className="eyebrow">Progress tracker</p>
-              <h2>Readiness score</h2>
+              <p className="eyebrow">Readiness score</p>
+              <h2>Progress toward a complete profile</h2>
             </div>
             <TrackChangesRoundedIcon />
           </div>
           <LinearProgress variant="determinate" value={progress} className="progress-bar" />
           <p className="muted">
-            {progress}% complete based on selected RIASEC codes, MBTI, and skillset coverage.
+            {formatPercent(progress)} complete using the proposal weighting of 50% skills, 30% RIASEC, and 20%
+            MBTI.
           </p>
         </GlassCard>
       </div>

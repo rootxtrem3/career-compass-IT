@@ -348,6 +348,58 @@ a {
   flex-wrap: wrap;
 }
 
+.track-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 600;
+}
+
+.track-toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
+.compact-card {
+  gap: 0.35rem;
+}
+
+.metric-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.metric-chip {
+  padding: 0.85rem 1rem;
+  min-width: 120px;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.metric-chip span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.info-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  font-size: 0.85rem;
+}
+
 .flow-list {
   list-style: decimal;
   padding-left: 1.2rem;
@@ -450,6 +502,22 @@ a {
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
   width: fit-content;
+}
+
+.checklist-list li {
+  width: 100%;
+}
+
+.team-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.team-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.4rem;
 }
 
 .check-item {
@@ -570,6 +638,29 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+@media (max-width: 860px) {
+  .site-header {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .top-nav {
+    justify-self: stretch;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .nav-actions {
+    justify-content: space-between;
+  }
+
+  .job-row,
+  .cookie-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @keyframes fadeUp {

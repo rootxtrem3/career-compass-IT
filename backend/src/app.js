@@ -10,8 +10,13 @@ import careersRouter from "./routes/careers.js";
 import progressRouter from "./routes/progress.js";
 import usersRouter from "./routes/users.js";
 import jobsRouter from "./routes/jobs.js";
+import { seedCatalogIfNeeded } from "./data/store.js";
 
 const app = express();
+
+seedCatalogIfNeeded().catch((error) => {
+  console.error("Catalog seeding failed", error);
+});
 
 app.use(cors());
 app.use(json({ limit: "1mb" }));
