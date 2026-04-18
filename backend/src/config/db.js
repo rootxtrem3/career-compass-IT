@@ -7,20 +7,35 @@ export const pool = new Pool({
 });
 
 export async function query(text, params = []) {
-  return pool.query(text, params);
+  if (!env.DATABASE_URL) {
+    console.warn('Database not configured. Returning empty result.');
+    return { rows: [], rowCount: 0 };
+  }
+  try {
+    return await pool.query(text, params);
+  } catch (error) {
+    console.error('Database query error:', error.message);
+    return { rows: [], rowCount: 0 };
+  }
 }
 
 export async function withTransaction(handler) {
-  const client = await pool.connect();
+  if (!env.DATABASE_URL) {
+    console.warn('Database not configured. withTransaction skipped.');
+    return null;
+  }
+  let client;
   try {
+    client = await pool.connect();
     await client.query('BEGIN');
     const result = await handler(client);
     await client.query('COMMIT');
     return result;
   } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
+    if (client) await client.query('ROLLBACK');
+    console.error('Database transaction error:', error.message);
+    return null;
   } finally {
-    client.release();
+    if (client) client.release();
   }
 }

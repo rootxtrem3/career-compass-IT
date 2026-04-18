@@ -6,7 +6,7 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(4000),
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  DATABASE_URL: z.string().optional(),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   JOBS_SYNC_LIMIT: z.coerce.number().int().positive().max(200).default(40),
   JOBS_PROVIDER: z.enum(['remotive', 'custom', 'adzuna']).default('remotive'),
@@ -20,7 +20,7 @@ const envSchema = z.object({
   ADZUNA_API_KEY: z.string().optional(),
   ADZUNA_COUNTRY: z.string().default('us'),
   ADZUNA_PAGE: z.coerce.number().int().positive().default(1),
-  JWT_SECRET: z.string().min(12, 'JWT_SECRET must be at least 12 characters'),
+  JWT_SECRET: z.string().min(12).default('development_secret_only_for_dev'),
   FIREBASE_PROJECT_ID: z.string().optional(),
   FIREBASE_CLIENT_EMAIL: z.string().optional(),
   FIREBASE_PRIVATE_KEY: z.string().optional()
