@@ -35,22 +35,22 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
   --bg: #0f172a;
-  --text: #e8f1ff;
-  --muted: #9cb0cc;
-  --line: rgba(130, 163, 206, 0.26);
+  --text: #f3f7ff;
+  --muted: #c1cfe5;
+  --line: rgba(154, 184, 222, 0.34);
   --glass: rgba(16, 27, 47, 0.72);
   --glass-soft: rgba(18, 32, 58, 0.86);
   --shadow: 0 34px 90px -54px rgba(0, 0, 0, 0.74);
   --accent: #7aa8ff;
   --accent-soft: rgba(122, 168, 255, 0.2);
-  --eyebrow: #a8c2f2;
+  --eyebrow: #d1def7;
   --nav-bg: rgba(21, 36, 64, 0.78);
   --nav-border: rgba(130, 163, 206, 0.3);
   --nav-active-bg: rgba(122, 168, 255, 0.2);
-  --input-border: rgba(130, 163, 206, 0.5);
-  --input-bg: rgba(9, 20, 36, 0.82);
-  --chip-border: rgba(130, 163, 206, 0.5);
-  --chip-bg: rgba(16, 29, 50, 0.7);
+  --input-border: rgba(158, 188, 225, 0.58);
+  --input-bg: rgba(7, 16, 31, 0.92);
+  --chip-border: rgba(154, 184, 222, 0.52);
+  --chip-bg: rgba(18, 31, 54, 0.82);
   --bg-grad-a: rgba(63, 101, 161, 0.35);
   --bg-grad-b: rgba(22, 35, 61, 0.75);
   --bg-grad-c: rgba(56, 92, 147, 0.22);
@@ -417,6 +417,7 @@ a {
   border-radius: 999px;
   border: 1px solid var(--chip-border);
   background: var(--chip-bg);
+  color: var(--text);
   padding: 0.4rem 0.8rem;
   font-size: 0.82rem;
   cursor: pointer;
@@ -474,9 +475,20 @@ a {
   border-radius: 999px;
   border: 1px solid var(--input-border);
   background: var(--input-bg);
+  color: var(--text);
   padding: 0.6rem 1rem;
   font-size: 0.9rem;
   outline: none;
+}
+
+.input-field::placeholder {
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.input-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .results-grid {
@@ -550,6 +562,10 @@ a {
   color: var(--muted);
   font-weight: 600;
   cursor: pointer;
+}
+
+.footer-link:hover {
+  color: var(--text);
 }
 
 .modal-backdrop {

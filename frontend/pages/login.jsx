@@ -6,7 +6,7 @@ import HistoryRoundedIcon from "@mui/icons-material/HistoryRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import GlassCard from "../components/GlassCard";
 import Layout from "../components/Layout";
-import { auth, googleProvider } from "../utils/firebase.js";
+import { auth, googleProvider, hasFirebaseConfig } from "../utils/firebase.js";
 import {
   createUserWithEmailAndPassword,
   getRedirectResult,
@@ -29,11 +29,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const isFirebaseConfigured =
-    Boolean(process.env.NEXT_PUBLIC_FIREBASE_API_KEY) &&
-    Boolean(process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) &&
-    Boolean(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
-
   async function syncUser(token) {
     await fetcher("/auth/sync", {
       method: "POST",
@@ -42,7 +37,7 @@ export default function LoginPage() {
   }
 
   useEffect(() => {
-    if (!isFirebaseConfigured) return;
+    if (!hasFirebaseConfig || !auth) return;
     getRedirectResult(auth)
       .then(async (result) => {
         if (!result?.user) return;
@@ -54,7 +49,7 @@ export default function LoginPage() {
       .catch(() => {
         // Ignore redirect errors when popup flow is used.
       });
-  }, [isFirebaseConfigured]);
+  }, []);
 
   async function handleGoogleLogin() {
     setError("");
@@ -122,7 +117,7 @@ export default function LoginPage() {
             ))}
           </div>
 
-          {!isFirebaseConfigured ? (
+          {!hasFirebaseConfig ? (
             <p className="muted">Firebase is not configured. Set `NEXT_PUBLIC_FIREBASE_*` vars.</p>
           ) : null}
 
@@ -132,7 +127,7 @@ export default function LoginPage() {
             className="m3-btn google-btn"
             startIcon={<GoogleIcon />}
             onClick={handleGoogleLogin}
-            disabled={!isFirebaseConfigured || loading}
+            disabled={!hasFirebaseConfig || !auth || !googleProvider || loading}
           >
             {loading ? "Signing in..." : "Continue with Google"}
           </Button>
@@ -199,7 +194,7 @@ export default function LoginPage() {
               type="submit"
               variant="outlined"
               className="m3-btn soft"
-              disabled={!isFirebaseConfigured || loading}
+              disabled={!hasFirebaseConfig || !auth || loading}
             >
               {mode === "register" ? "Register with Email" : "Login with Email"}
             </Button>

@@ -2,16 +2,20 @@ import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
   palette: {
-    mode: "light",
+    mode: "dark",
     primary: {
       main: "#2465d8"
     },
     secondary: {
       main: "#2465d8"
     },
+    text: {
+      primary: "#e8f1ff",
+      secondary: "#c1cfe5"
+    },
     background: {
-      default: "#eef3fb",
-      paper: "#ffffff"
+      default: "#0f172a",
+      paper: "#15203a"
     }
   },
   typography: {
@@ -31,5 +35,49 @@ export const theme = createTheme({
   },
   shape: {
     borderRadius: 16
+  },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          color: "var(--text)",
+          backgroundColor: "var(--bg)"
+        }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: "var(--text)"
+        },
+        contained: {
+          color: "#ffffff"
+        },
+        outlined: {
+          borderColor: "var(--line)",
+          color: "var(--text)"
+        },
+        text: {
+          color: "var(--text)"
+        }
+      }
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: "var(--text)"
+        }
+      }
+    },
+    MuiLinearProgress: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "var(--chip-bg)"
+        },
+        bar: {
+          backgroundColor: "var(--accent)"
+        }
+      }
+    }
   }
 });
