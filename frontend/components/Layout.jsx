@@ -4,6 +4,7 @@ import { Box, Button, IconButton } from "@mui/material";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -12,6 +13,7 @@ import { auth } from "../utils/firebase.js";
 
 export default function Layout({ children }) {
   const [theme, setTheme] = useState("light");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const [cookiesAccepted, setCookiesAccepted] = useState(false);
   const [viewer, setViewer] = useState(null);
@@ -74,7 +76,7 @@ export default function Layout({ children }) {
       <div className="ambient ambient-a" />
       <div className="ambient ambient-b" />
 
-      <header className="site-header glass-soft">
+      <header className={`site-header glass-soft ${isMenuOpen ? "menu-open" : ""}`}>
         <div className="brand">
           <img src="/file.svg" alt="Career Compass Logo" style={{ width: '1.8rem', height: '1.8rem', objectFit: 'contain' }} />
           <div>
@@ -82,42 +84,65 @@ export default function Layout({ children }) {
             <small>Persona + Skills Intelligence</small>
           </div>
         </div>
-        <Navigation />
-        <div className="nav-actions">
+
+        <div className="mobile-toggle">
           <IconButton
-            aria-label="Toggle theme"
-            onClick={toggleTheme}
-            className="icon-toggle"
-            size="small"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            color="inherit"
+            aria-label="Toggle menu"
           >
-            {theme === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+            {isMenuOpen ? <CloseRoundedIcon /> : <MenuRoundedIcon />}
           </IconButton>
-          {viewer ? (
-            <>
+        </div>
+
+        <div className="nav-container">
+          <Navigation />
+          <div className="nav-actions">
+            <IconButton
+              aria-label="Toggle theme"
+              onClick={toggleTheme}
+              className="icon-toggle"
+              size="small"
+            >
+              {theme === "light" ? <DarkModeRoundedIcon /> : <LightModeRoundedIcon />}
+            </IconButton>
+            {viewer ? (
+              <>
+                <Button
+                  component={Link}
+                  href="/profile"
+                  variant="outlined"
+                  className="m3-btn soft"
+                  startIcon={<PersonRoundedIcon />}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {viewer.displayName || viewer.email || "Profile"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  className="m3-btn"
+                  startIcon={<LogoutRoundedIcon />}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleLogout();
+                  }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
               <Button
                 component={Link}
-                href="/profile"
-                variant="outlined"
-                className="m3-btn soft"
-                startIcon={<PersonRoundedIcon />}
-              >
-                {viewer.displayName || viewer.email || "Profile"}
-              </Button>
-              <Button
-                type="button"
+                href="/login"
                 variant="contained"
                 className="m3-btn"
-                startIcon={<LogoutRoundedIcon />}
-                onClick={handleLogout}
+                onClick={() => setIsMenuOpen(false)}
               >
-                Logout
+                Login
               </Button>
-            </>
-          ) : (
-            <Button component={Link} href="/login" variant="contained" className="m3-btn">
-              Login
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
