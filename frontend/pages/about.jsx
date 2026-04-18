@@ -80,7 +80,7 @@ export default function AboutPage() {
 
         <GlassCard className="content-card fade-up" as="section">
           <p className="eyebrow">Team roles</p>
-          <h2>Responsibilities from the document</h2>
+          <h2>Credits to the builders</h2>
           <div className="team-grid">
             {team.map((item) => (
               <div key={item.role} className="glass-soft team-card">

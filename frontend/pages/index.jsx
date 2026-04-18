@@ -38,8 +38,6 @@ const problemPoints = [
 const architecture = [
   { label: "Hybrid matching", value: "50/30/20", note: "Skills, RIASEC, MBTI" },
   { label: "Core stack", value: "React + Express", note: "Decoupled client and API" },
-  { label: "Data layer", value: "PostgreSQL", note: "Relational scoring and persistence" },
-  { label: "Auth layer", value: "Firebase", note: "JWT-based secure access" }
 ];
 
 const timeline = [

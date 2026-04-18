@@ -76,7 +76,7 @@ export default function Layout({ children }) {
 
       <header className="site-header glass-soft">
         <div className="brand">
-          <span className="brand-orb" />
+          <img src="/file.svg" alt="Career Compass Logo" style={{ width: '1.8rem', height: '1.8rem', objectFit: 'contain' }} />
           <div>
             Career Compass
             <small>Persona + Skills Intelligence</small>

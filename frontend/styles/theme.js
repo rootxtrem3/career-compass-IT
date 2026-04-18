@@ -34,7 +34,7 @@ export const theme = createTheme({
     }
   },
   shape: {
-    borderRadius: 16
+    borderRadius: 8
   },
   components: {
     MuiCssBaseline: {
@@ -48,7 +48,10 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          color: "var(--text)"
+          color: "var(--text)",
+          borderRadius: 8,
+          textTransform: "none",
+          fontWeight: 600
         },
         contained: {
           color: "#ffffff"
@@ -72,7 +75,8 @@ export const theme = createTheme({
     MuiLinearProgress: {
       styleOverrides: {
         root: {
-          backgroundColor: "var(--chip-bg)"
+          backgroundColor: "var(--chip-bg)",
+          borderRadius: 8
         },
         bar: {
           backgroundColor: "var(--accent)"

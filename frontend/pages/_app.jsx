@@ -33,6 +33,7 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         <title>Career Compass</title>
+        <link rel="icon" href="/file.svg" />
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
