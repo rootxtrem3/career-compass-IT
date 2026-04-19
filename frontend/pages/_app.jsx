@@ -6,6 +6,21 @@ import { useEffect } from "react";
 import { onIdTokenChanged } from "firebase/auth";
 import { auth } from "../utils/firebase.js";
 import { fetcher } from "../utils/api.js";
+import { Plus_Jakarta_Sans, Sora } from "next/font/google";
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plus-jakarta",
+  display: "swap"
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-sora",
+  display: "swap"
+});
 
 export default function App({ Component, pageProps }) {
   useEffect(() => {
@@ -36,10 +51,12 @@ export default function App({ Component, pageProps }) {
         <link rel="icon" href="/file.svg" />
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <div className={`${plusJakartaSans.variable} ${sora.variable}`}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </div>
     </>
   );
 }
